@@ -160,26 +160,31 @@ export default function Screen3({ onNext }) {
     const girlRef = useRef(null);
     const inputRef = useRef(null);
 
-    // Real-time listener
+    // Real-time messages
     useEffect(() => {
         const q = query(collection(db, "romanticChat"), orderBy("timestamp"));
         const unsubscribe = onSnapshot(q, (snap) => {
-            const newMessages = snap.docs.map(d => ({ ...d.data() }));
-            setMessages(newMessages);
+            setMessages(snap.docs.map(d => ({ ...d.data() })));
+        });
+        return unsubscribe;
+    }, []);
 
-            // Auto update turn based on last message
-            if (newMessages.length > 0) {
-                const lastSender = newMessages[newMessages.length - 1].sender;
-                setIsBoyTurn(lastSender === "girl");
+    // Real-time turn sync
+    useEffect(() => {
+        const turnRef = doc(db, "gameState", "currentTurn");
+        const unsubscribe = onSnapshot(turnRef, (docSnap) => {
+            if (docSnap.exists()) {
+                setIsBoyTurn(docSnap.data().isBoyTurn);
+            } else {
+                setDoc(turnRef, { isBoyTurn: true });
             }
         });
         return unsubscribe;
     }, []);
 
-    // Cinematic animation
+    // Cinematic animation (same as before)
     useEffect(() => {
         const tl = gsap.timeline({ delay: 0.3 });
-
         tl.to(curtainRef.current, { scaleX: 0, duration: 2.6, ease: "power4.inOut" })
             .fromTo(boyRef.current, { opacity: 0, x: -90 }, { opacity: 1, x: 0, duration: 2, ease: "back.out(1.5)" }, "-=1.6")
             .fromTo(girlRef.current, { opacity: 0, x: 90 }, { opacity: 1, x: 0, duration: 2, ease: "back.out(1.5)" }, "-=1.7")
@@ -202,14 +207,19 @@ export default function Screen3({ onNext }) {
 
     const sendMessage = async () => {
         if (!input.trim()) return;
+
         await addDoc(collection(db, "romanticChat"), {
             text: input.trim(),
             sender: isBoyTurn ? "boy" : "girl",
             timestamp: serverTimestamp(),
         });
+
+        // Switch turn in Firebase
+        const turnRef = doc(db, "gameState", "currentTurn");
+        await setDoc(turnRef, { isBoyTurn: !isBoyTurn });
+
         setInput('');
     };
-
     return (
         <div style={styles.root}>
             <div style={styles.cafeBg} />
@@ -248,7 +258,7 @@ export default function Screen3({ onNext }) {
                 </div>
             ))}
 
-            {/* Input - Disabled when not your turn */}
+            {/* Input */}
             <div ref={inputRef} style={{ ...styles.inputContainer, opacity: 0 }}>
                 <div style={{ display: 'flex', gap: '12px', flexDirection: 'column', sm: { flexDirection: 'row' } }}>
                     <input
@@ -256,7 +266,7 @@ export default function Screen3({ onNext }) {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                        placeholder={isBoyTurn ? "Tell her how special she is..." : "Waiting for her reply..."}
+                        placeholder={isBoyTurn ? "Tell her how special she is..." : "Waiting for her sweet reply..."}
                         disabled={!isBoyTurn}
                         style={{
                             flex: 1,
