@@ -68,7 +68,7 @@ const styles = {
     boy: {
         position: 'absolute',
         left: '48px',
-        bottom: '135px',
+        bottom: '95px',
         width: '190px',
         height: '310px',
         backgroundImage: 'url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH_vCVs9XTDjSgak3I25x0cVn3Ad-o7bfn6x8vTA-ZZdmPsYb9PJ8JsWw&s=10")',
@@ -82,7 +82,7 @@ const styles = {
     girl: {
         position: 'absolute',
         right: '45px',
-        bottom: '93px',
+        bottom: '92px',
         width: '195px',
         height: '310px',
         backgroundImage: 'url("https://dreampfp.com/wp-content/uploads/2026/05/Aesthetic-Pfp-Black-And-White-2.webp")',
@@ -111,33 +111,30 @@ const styles = {
         zIndex: 18,
     },
 
-    // Messages now positioned relative to main container
     messageBoy: {
         position: 'absolute',
-        left: '80px',
-        top: '-90px',
+        left: '8%',
+        top: '18%',
         background: 'rgba(255, 225, 235, 0.97)',
         padding: '18px 26px',
         borderRadius: '26px 26px 8px 26px',
-        maxWidth: '260px',
+        maxWidth: '48%',
         boxShadow: '0 15px 40px rgba(194,59,111,0.35)',
         zIndex: 35,
         fontSize: '1.22rem',
-        pointerEvents: 'none',
     },
 
     messageGirl: {
         position: 'absolute',
-        right: '70px',
-        top: '-105px',
+        right: '8%',
+        top: '18%',
         background: 'rgba(225, 240, 255, 0.97)',
         padding: '18px 26px',
         borderRadius: '26px 26px 26px 8px',
-        maxWidth: '260px',
+        maxWidth: '48%',
         boxShadow: '0 15px 40px rgba(194,59,111,0.35)',
         zIndex: 35,
         fontSize: '1.22rem',
-        pointerEvents: 'none',
     },
 
     inputContainer: {
@@ -145,9 +142,10 @@ const styles = {
         bottom: '7%',
         left: '50%',
         transform: 'translateX(-50%)',
-        width: '88%',
+        width: '92%',
         maxWidth: '680px',
         zIndex: 40,
+        padding: '0 10px',
     },
 };
 
@@ -162,9 +160,9 @@ export default function Screen3({ onNext }) {
     const girlRef = useRef(null);
     const inputRef = useRef(null);
 
-    // Real-time messages
+    // Real-time listener
     useEffect(() => {
-        const q = query(collection(db, "RomChitChat"), orderBy("timestamp"));
+        const q = query(collection(db, "romanticChat"), orderBy("timestamp"));
         const unsubscribe = onSnapshot(q, (snap) => {
             setMessages(snap.docs.map(d => ({ ...d.data() })));
         });
@@ -197,7 +195,7 @@ export default function Screen3({ onNext }) {
 
     const sendMessage = async () => {
         if (!input.trim()) return;
-        await addDoc(collection(db, "romanticChat"), {  // Fixed collection name
+        await addDoc(collection(db, "romanticChat"), {
             text: input.trim(),
             sender: isBoyTurn ? "boy" : "girl",
             timestamp: serverTimestamp(),
@@ -233,22 +231,20 @@ export default function Screen3({ onNext }) {
                 <div style={styles.sideTable}>💑</div>
             </div>
 
-            {/* Messages - Now properly positioned inside main container */}
-            {messages.slice(-4).map((msg, i) => (
+            {/* Messages */}
+            {messages.slice(-5).map((msg, i) => (
                 <div
                     key={i}
-                    style={{
-                        ...(msg.sender === 'boy' ? styles.messageBoy : styles.messageGirl),
-                        zIndex: 35,
-                    }}
+                    style={msg.sender === 'boy' ? styles.messageBoy : styles.messageGirl}
                 >
                     <strong>{msg.sender === 'boy' ? '❤️ You' : '💕 Her'}</strong><br />
                     {msg.text}
                 </div>
             ))}
 
+            {/* Input - Mobile Friendly */}
             <div ref={inputRef} style={{ ...styles.inputContainer, opacity: 0 }}>
-                <div style={{ display: 'flex', gap: '20px' }}>
+                <div style={{ display: 'flex', gap: '12px', flexDirection: 'column', sm: { flexDirection: 'row' } }}>
                     <input
                         type="text"
                         value={input}
@@ -257,25 +253,26 @@ export default function Screen3({ onNext }) {
                         placeholder={isBoyTurn ? "Tell her how special she is..." : "Waiting for her sweet reply..."}
                         style={{
                             flex: 1,
-                            padding: '26px 34px',
-                            fontSize: '1.3rem',
+                            padding: '20px 28px',
+                            fontSize: '1.2rem',
                             borderRadius: '9999px',
                             border: 'none',
                             background: 'rgba(255,255,255,0.96)',
-                            boxShadow: '0 20px 55px rgba(194,59,111,0.22)',
+                            boxShadow: '0 15px 45px rgba(194,59,111,0.2)',
                         }}
                     />
                     <button
                         onClick={sendMessage}
                         style={{
-                            padding: '26px 56px',
+                            padding: '20px 48px',
                             background: 'linear-gradient(45deg, #ff4d94, #c22b6f)',
                             color: 'white',
                             border: 'none',
                             borderRadius: '9999px',
-                            fontSize: '1.25rem',
+                            fontSize: '1.2rem',
                             cursor: 'pointer',
-                            boxShadow: '0 20px 55px rgba(255,77,148,0.45)',
+                            boxShadow: '0 15px 45px rgba(255,77,148,0.4)',
+                            whiteSpace: 'nowrap',
                         }}
                     >
                         Send 💌
