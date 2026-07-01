@@ -169,7 +169,7 @@ export default function Screen3({ onNext }) {
         return unsubscribe;
     }, []);
 
-    // Real-time shared turn with initial setup
+    // Real-time shared turn
     useEffect(() => {
         const turnRef = doc(db, "gameState", "currentTurn");
 
