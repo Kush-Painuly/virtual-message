@@ -9,7 +9,7 @@ build
 
 # Environment variables & secrets
 .env
-firebase.js
+src/firebaseConfig.js
 
 # Logs
 logs
