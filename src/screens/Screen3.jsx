@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { db } from '../firebase';
 import FallingLeaves from '../components/FallingLeaves';
 
 const styles = {
