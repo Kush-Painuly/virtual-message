@@ -169,22 +169,32 @@ export default function Screen3({ onNext }) {
         return unsubscribe;
     }, []);
 
-    // Real-time turn sync
+    // Real-time shared turn with initial setup
     useEffect(() => {
         const turnRef = doc(db, "gameState", "currentTurn");
+
+        const initTurn = async () => {
+            const turnSnap = await getDoc(turnRef);
+            if (!turnSnap.exists()) {
+                await setDoc(turnRef, { isBoyTurn: true });
+            }
+        };
+
+        initTurn();
+
         const unsubscribe = onSnapshot(turnRef, (docSnap) => {
             if (docSnap.exists()) {
                 setIsBoyTurn(docSnap.data().isBoyTurn);
-            } else {
-                setDoc(turnRef, { isBoyTurn: true });
             }
         });
+
         return unsubscribe;
     }, []);
 
-    // Cinematic animation (same as before)
+    // Cinematic animation
     useEffect(() => {
         const tl = gsap.timeline({ delay: 0.3 });
+
         tl.to(curtainRef.current, { scaleX: 0, duration: 2.6, ease: "power4.inOut" })
             .fromTo(boyRef.current, { opacity: 0, x: -90 }, { opacity: 1, x: 0, duration: 2, ease: "back.out(1.5)" }, "-=1.6")
             .fromTo(girlRef.current, { opacity: 0, x: 90 }, { opacity: 1, x: 0, duration: 2, ease: "back.out(1.5)" }, "-=1.7")
@@ -214,7 +224,7 @@ export default function Screen3({ onNext }) {
             timestamp: serverTimestamp(),
         });
 
-        // Switch turn in Firebase
+        // Switch turn
         const turnRef = doc(db, "gameState", "currentTurn");
         await setDoc(turnRef, { isBoyTurn: !isBoyTurn });
 
