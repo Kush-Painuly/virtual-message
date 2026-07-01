@@ -164,7 +164,14 @@ export default function Screen3({ onNext }) {
     useEffect(() => {
         const q = query(collection(db, "romanticChat"), orderBy("timestamp"));
         const unsubscribe = onSnapshot(q, (snap) => {
-            setMessages(snap.docs.map(d => ({ ...d.data() })));
+            const newMessages = snap.docs.map(d => ({ ...d.data() }));
+            setMessages(newMessages);
+
+            // Auto update turn based on last message
+            if (newMessages.length > 0) {
+                const lastSender = newMessages[newMessages.length - 1].sender;
+                setIsBoyTurn(lastSender === "girl");
+            }
         });
         return unsubscribe;
     }, []);
@@ -201,7 +208,6 @@ export default function Screen3({ onNext }) {
             timestamp: serverTimestamp(),
         });
         setInput('');
-        setIsBoyTurn(!isBoyTurn);
     };
 
     return (
@@ -242,7 +248,7 @@ export default function Screen3({ onNext }) {
                 </div>
             ))}
 
-            {/* Input - Mobile Friendly */}
+            {/* Input - Disabled when not your turn */}
             <div ref={inputRef} style={{ ...styles.inputContainer, opacity: 0 }}>
                 <div style={{ display: 'flex', gap: '12px', flexDirection: 'column', sm: { flexDirection: 'row' } }}>
                     <input
@@ -250,28 +256,31 @@ export default function Screen3({ onNext }) {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                        placeholder={isBoyTurn ? "Tell her how special she is..." : "Waiting for her sweet reply..."}
+                        placeholder={isBoyTurn ? "Tell her how special she is..." : "Waiting for her reply..."}
+                        disabled={!isBoyTurn}
                         style={{
                             flex: 1,
                             padding: '20px 28px',
                             fontSize: '1.2rem',
                             borderRadius: '9999px',
                             border: 'none',
-                            background: 'rgba(255,255,255,0.96)',
+                            background: isBoyTurn ? 'rgba(255,255,255,0.96)' : 'rgba(240,240,240,0.8)',
                             boxShadow: '0 15px 45px rgba(194,59,111,0.2)',
+                            cursor: isBoyTurn ? 'text' : 'not-allowed',
                         }}
                     />
                     <button
                         onClick={sendMessage}
+                        disabled={!isBoyTurn}
                         style={{
                             padding: '20px 48px',
-                            background: 'linear-gradient(45deg, #ff4d94, #c22b6f)',
+                            background: isBoyTurn ? 'linear-gradient(45deg, #ff4d94, #c22b6f)' : '#ccc',
                             color: 'white',
                             border: 'none',
                             borderRadius: '9999px',
                             fontSize: '1.2rem',
-                            cursor: 'pointer',
-                            boxShadow: '0 15px 45px rgba(255,77,148,0.4)',
+                            cursor: isBoyTurn ? 'pointer' : 'not-allowed',
+                            boxShadow: isBoyTurn ? '0 15px 45px rgba(255,77,148,0.4)' : 'none',
                             whiteSpace: 'nowrap',
                         }}
                     >
