@@ -23,7 +23,8 @@ function LeafSVG({ color }) {
       />
     </svg>
   )
-}
+}  
+
 
 export default function FallingLeaves({ count = 22 }) {
   const containerRef = useRef(null)
