@@ -1,27 +1,5 @@
-# Dependencies
 node_modules
-/.pnp
-.pnp.js
-
-# Build output
 dist
-build
-
-# Environment variables & secrets
 .env
-src/firebaseConfig.js
-
-# Logs
-logs
+firebase.js
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Editor files
-.vscode
-.idea
-
-# Misc
-.DS_Store
-*.pem
