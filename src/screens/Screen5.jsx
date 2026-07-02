@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import FallingLeaves from '../components/FallingLeaves';
-import RomDance from "../../public/rom-dance.mp4"
+import RomDance from "../../public/rom-dance.mp4";
+import DieWithASmile from "../../public/bg-music.mp4";
+
 const styles = {
     root: {
         position: 'relative',
@@ -107,7 +109,7 @@ export default function Screen5({ onNext }) {
 
             {/* Background Music */}
             <audio ref={audioRef} loop>
-                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
+                <source src={DieWithASmile} type="audio/mpeg" />
             </audio>
 
             {/* Floating Leaves */}
