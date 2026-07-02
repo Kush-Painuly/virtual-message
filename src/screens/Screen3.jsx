@@ -122,41 +122,41 @@ const styles = {
         zIndex: 18,
     },
 
-    messageBoy: {
+    letterBox: {
         position: 'absolute',
-        left: '8%',
         top: '18%',
-        background: 'rgba(255, 225, 235, 0.97)',
-        padding: '18px 26px',
-        borderRadius: '26px 26px 8px 26px',
-        maxWidth: '48%',
-        boxShadow: '0 15px 40px rgba(194,59,111,0.35)',
-        zIndex: 35,
-        fontSize: '1.22rem',
-    },
-
-    messageGirl: {
-        position: 'absolute',
-        right: '8%',
-        top: '18%',
-        background: 'rgba(225, 240, 255, 0.97)',
-        padding: '18px 26px',
-        borderRadius: '26px 26px 26px 8px',
-        maxWidth: '48%',
-        boxShadow: '0 15px 40px rgba(194,59,111,0.35)',
-        zIndex: 35,
-        fontSize: '1.22rem',
-    },
-
-    inputContainer: {
-        position: 'absolute',
-        bottom: '7%',
         left: '50%',
         transform: 'translateX(-50%)',
         width: '92%',
-        maxWidth: '680px',
-        zIndex: 40,
-        padding: '0 10px',
+        maxWidth: '720px',
+        background: 'rgba(255,255,255,0.94)',
+        padding: '2.5rem 3rem',
+        borderRadius: '28px',
+        boxShadow: '0 25px 70px rgba(194,59,111,0.25)',
+        zIndex: 30,
+        textAlign: 'center',
+        minHeight: '260px',
+    },
+
+    messageLine: {
+        fontSize: '1.48rem',
+        lineHeight: 1.75,
+        marginBottom: '1.1rem',
+        opacity: 0,
+        transform: 'translateY(25px)',
+        color: '#5c2d5c',
+    },
+
+    continueHint: {
+        position: 'absolute',
+        bottom: '8%',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        fontSize: '1.5rem',
+        color: '#c23b6f',
+        cursor: 'pointer',
+        zIndex: 50,
+        opacity: 0,
     },
 };
 
