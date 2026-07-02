@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import FallingLeaves from '../components/FallingLeaves';
 import RomDance from "../../public/rom-dance.mp4";
-import DieWithASmile from "../../public/bg-music.mp4";
+import DieWithASmile from "../../public/bg-music.mp3";
 
 const styles = {
     root: {
