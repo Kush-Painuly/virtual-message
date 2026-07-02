@@ -36,7 +36,7 @@ const styles = {
     softOverlay: {
         position: 'absolute',
         inset: 0,
-        background: 'linear-gradient(to bottom, rgba(255,240,248,0.45), rgba(255,240,248,0.88))',
+        background: 'linear-gradient(to bottom, rgba(255,240,248,0.4), rgba(255,240,248,0.88))',
         zIndex: 2,
     },
 
@@ -44,7 +44,7 @@ const styles = {
         position: 'absolute',
         inset: 0,
         background: 'linear-gradient(to right, #3a2a20, #6b4e3d, #3a2a20)',
-        zIndex: 100,
+        zIndex: 5,
         transformOrigin: 'center',
     },
 
@@ -120,25 +120,27 @@ const styles = {
         zIndex: 18,
     },
 
-    messageContainer: {
+    // Message at the VERY TOP
+    letterContainer: {
         position: 'absolute',
-        top: '8%',
+        top: '6%',
         left: '50%',
         transform: 'translateX(-50%)',
         width: '88%',
-        maxWidth: '820px',
-        zIndex: 40,
+        maxWidth: '860px',
+        zIndex: 60, // Very high
         textAlign: 'center',
-        minHeight: '180px',
+        padding: '1rem',
     },
 
     messageLine: {
-        fontSize: '1.85rem',
-        lineHeight: 2.1,
+        fontSize: '2.1rem',
+        lineHeight: 2.2,
+        marginBottom: '2rem',
         fontStyle: 'italic',
         color: '#5c2d5c',
-        textShadow: '0 3px 12px rgba(0,0,0,0.1)',
-        opacity: 1,
+        textShadow: '0 4px 15px rgba(0,0,0,0.2)',
+        minHeight: '80px',
     },
 
     continueHint: {
@@ -146,19 +148,19 @@ const styles = {
         bottom: '8%',
         left: '50%',
         transform: 'translateX(-50%)',
-        fontSize: '1.6rem',
+        fontSize: '1.7rem',
         color: '#c23b6f',
         cursor: 'pointer',
-        zIndex: 50,
-        padding: '16px 52px',
+        zIndex: 70,
+        padding: '18px 56px',
         borderRadius: '50px',
-        background: 'rgba(255,255,255,0.9)',
-        boxShadow: '0 15px 40px rgba(194,59,111,0.3)',
+        background: 'rgba(255,255,255,0.95)',
+        boxShadow: '0 15px 45px rgba(194,59,111,0.4)',
     },
 };
 
 export default function Screen3({ onNext }) {
-    const [currentLine, setCurrentLine] = useState("");
+    const [currentLineIndex, setCurrentLineIndex] = useState(0);
     const [showContinue, setShowContinue] = useState(false);
 
     const curtainRef = useRef(null);
@@ -180,42 +182,33 @@ export default function Screen3({ onNext }) {
         return () => tl.kill();
     }, []);
 
-    // Sequential message with fade in/out at same position
+    // Sequential message
     useEffect(() => {
         let index = 0;
 
-        const showNextLine = () => {
+        const interval = setInterval(() => {
             if (index < romanticLines.length) {
-                // Fade out current line
+                setCurrentLineIndex(index);
+
+                // Fade in effect
                 if (messageRef.current) {
-                    gsap.to(messageRef.current, {
-                        opacity: 0,
-                        duration: 0.8,
-                        onComplete: () => {
-                            setCurrentLine(romanticLines[index]);
-                            // Fade in new line
-                            gsap.to(messageRef.current, {
-                                opacity: 1,
-                                duration: 1.6,
-                                ease: "power2.out"
-                            });
-                        }
-                    });
-                } else {
-                    setCurrentLine(romanticLines[index]);
+                    gsap.fromTo(messageRef.current,
+                        { opacity: 0, y: 20 },
+                        { opacity: 1, y: 0, duration: 1.6, ease: "power2.out" }
+                    );
                 }
 
                 index++;
-                setTimeout(showNextLine, 3200);
             } else {
+                clearInterval(interval);
                 setTimeout(() => {
                     setShowContinue(true);
                     gsap.to(curtainRef.current.parentNode, { filter: 'brightness(0.72)', duration: 4 });
-                }, 1400);
+                }, 800);
             }
-        };
+        }, 3000);
 
-        setTimeout(showNextLine, 800);
+        return () => clearInterval(interval);
     }, []);
 
     return (
@@ -245,24 +238,17 @@ export default function Screen3({ onNext }) {
                 <div style={styles.sideTable}>💑</div>
             </div>
 
-            {/* Single Message Position at Top */}
+            {/* Message at Top - High Visibility */}
             <div style={styles.letterContainer}>
-                <h2 style={{ marginBottom: '2.5rem', fontSize: '3rem', color: '#c23b6f', fontStyle: 'italic' }}>
+                <h2 style={{ marginBottom: '2.2rem', fontSize: '3.1rem', color: '#c23b6f', fontStyle: 'italic' }}>
                     My Dearest...
                 </h2>
 
                 <p
                     ref={messageRef}
-                    style={{
-                        fontSize: '1.85rem',
-                        lineHeight: 2.1,
-                        fontStyle: 'italic',
-                        color: '#5c2d5c',
-                        textShadow: '0 3px 12px rgba(0,0,0,0.1)',
-                        minHeight: '120px',
-                    }}
+                    style={styles.messageLine}
                 >
-                    {currentLine}
+                    {romanticLines[currentLineIndex] || ""}
                 </p>
             </div>
 
