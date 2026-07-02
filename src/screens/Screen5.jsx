@@ -122,7 +122,7 @@ export default function Screen5({ onNext }) {
                     );
                 }
             });
-        }, 30000); // 30 seconds per image
+        }, 3000); // 3seconds per image
 
         return () => {
             clearInterval(imageInterval);
