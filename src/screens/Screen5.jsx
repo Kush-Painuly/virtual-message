@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import FallingLeaves from '../components/FallingLeaves';
-
+import RomDance from "../../public/rom-dance.mp4"
 const styles = {
     root: {
         position: 'relative',
@@ -90,7 +90,7 @@ export default function Screen5({ onNext }) {
                 muted
                 playsInline
             >
-                <source src="https://assets.mixkit.co/videos/preview/12345/12345-large.mp4" type="video/mp4" />
+                <source src={RomDance} type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
 
