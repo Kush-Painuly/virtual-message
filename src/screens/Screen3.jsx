@@ -120,28 +120,27 @@ const styles = {
         zIndex: 18,
     },
 
-    letterBox: {
+    letterContainer: {
         position: 'absolute',
-        top: '18%',
+        top: '12%',
         left: '50%',
         transform: 'translateX(-50%)',
-        width: '88%',
-        maxWidth: '720px',
-        background: 'rgba(255,255,255,0.95)',
-        padding: '3rem 3.5rem',
-        borderRadius: '28px',
-        boxShadow: '0 25px 70px rgba(194,59,111,0.25)',
+        width: '86%',
+        maxWidth: '820px',
         zIndex: 30,
         textAlign: 'center',
+        padding: '2rem 1rem',
     },
 
     messageLine: {
-        fontSize: '1.55rem',
-        lineHeight: 1.85,
-        marginBottom: '1.4rem',
-        opacity: 0,
-        transform: 'translateY(30px)',
+        fontSize: '1.65rem',
+        lineHeight: 1.9,
+        marginBottom: '1.6rem',
+        fontStyle: 'italic',
         color: '#5c2d5c',
+        opacity: 0,
+        transform: 'translateY(20px)',
+        letterSpacing: '0.4px',
     },
 
     continueHint: {
@@ -153,24 +152,23 @@ const styles = {
         color: '#c23b6f',
         cursor: 'pointer',
         zIndex: 50,
-        padding: '12px 32px',
+        padding: '14px 40px',
         borderRadius: '50px',
         background: 'rgba(255,255,255,0.9)',
-        boxShadow: '0 10px 30px rgba(194,59,111,0.3)',
+        boxShadow: '0 12px 35px rgba(194,59,111,0.25)',
     },
 };
 
 export default function Screen3({ onNext }) {
     const [lines, setLines] = useState([]);
     const [showContinue, setShowContinue] = useState(false);
-    const [scene, setScene] = useState('day');
 
     const curtainRef = useRef(null);
     const boyRef = useRef(null);
     const girlRef = useRef(null);
     const lineRefs = useRef([]);
 
-    // Cinematic opening
+    // Cinematic entrance
     useEffect(() => {
         const tl = gsap.timeline({ delay: 0.3 });
 
@@ -184,37 +182,38 @@ export default function Screen3({ onNext }) {
         return () => tl.kill();
     }, []);
 
-    // Line by line message
+    // Typewriter effect line by line
     useEffect(() => {
         let index = 0;
+
         const interval = setInterval(() => {
             if (index < romanticLines.length) {
                 setLines(prev => [...prev, romanticLines[index]]);
 
                 setTimeout(() => {
-                    if (lineRefs.current[index]) {
-                        gsap.to(lineRefs.current[index], {
+                    const el = lineRefs.current[index];
+                    if (el) {
+                        gsap.to(el, {
                             opacity: 1,
                             y: 0,
-                            duration: 1.6,
+                            duration: 1.8,
                             ease: "power3.out"
                         });
                     }
-                }, 100);
+                }, 80);
 
                 index++;
             } else {
                 clearInterval(interval);
                 setTimeout(() => {
                     setShowContinue(true);
-                    setScene('night');
                     gsap.to(curtainRef.current.parentNode, {
-                        filter: 'brightness(0.72) saturate(0.95)',
+                        filter: 'brightness(0.72)',
                         duration: 4
                     });
-                }, 900);
+                }, 1200);
             }
-        }, 2800);
+        }, 3200); // Adjust speed here (ms per line)
 
         return () => clearInterval(interval);
     }, []);
@@ -226,6 +225,7 @@ export default function Screen3({ onNext }) {
 
             <div ref={curtainRef} style={styles.curtain} />
 
+            {/* Cafe Scene */}
             <div style={styles.tablesContainer}>
                 <div style={styles.sideTable}>👫</div>
                 <div style={styles.sideTable}>💑</div>
@@ -246,9 +246,9 @@ export default function Screen3({ onNext }) {
                 <div style={styles.sideTable}>💑</div>
             </div>
 
-            {/* Message Box */}
-            <div style={styles.letterBox}>
-                <h2 style={{ marginBottom: '2.2rem', fontSize: '2.8rem', color: '#c23b6f' }}>
+            {/* Elegant Letter at Top */}
+            <div style={styles.letterContainer}>
+                <h2 style={{ marginBottom: '2.5rem', fontSize: '2.8rem', color: '#c23b6f', fontStyle: 'italic' }}>
                     My Dearest...
                 </h2>
 
@@ -263,7 +263,7 @@ export default function Screen3({ onNext }) {
                 ))}
             </div>
 
-            {/* Continue Button */}
+            {/* Continue */}
             {showContinue && (
                 <div
                     style={styles.continueHint}
