@@ -120,27 +120,25 @@ const styles = {
         zIndex: 18,
     },
 
-    letterContainer: {
+    messageContainer: {
         position: 'absolute',
         top: '8%',
         left: '50%',
         transform: 'translateX(-50%)',
-        width: '86%',
+        width: '88%',
         maxWidth: '820px',
         zIndex: 40,
         textAlign: 'center',
-        padding: '1.5rem',
+        minHeight: '180px',
     },
 
     messageLine: {
-        fontSize: '1.72rem',
-        lineHeight: 1.95,
-        marginBottom: '1.8rem',
+        fontSize: '1.85rem',
+        lineHeight: 2.1,
         fontStyle: 'italic',
         color: '#5c2d5c',
+        textShadow: '0 3px 12px rgba(0,0,0,0.1)',
         opacity: 1,
-        transform: 'translateY(30px)',
-        letterSpacing: '0.6px',
     },
 
     continueHint: {
@@ -152,22 +150,23 @@ const styles = {
         color: '#c23b6f',
         cursor: 'pointer',
         zIndex: 50,
-        padding: '16px 48px',
+        padding: '16px 52px',
         borderRadius: '50px',
-        background: 'rgba(255,255,255,0.92)',
+        background: 'rgba(255,255,255,0.9)',
         boxShadow: '0 15px 40px rgba(194,59,111,0.3)',
     },
 };
 
 export default function Screen3({ onNext }) {
-    const [lines, setLines] = useState([]);
+    const [currentLine, setCurrentLine] = useState("");
     const [showContinue, setShowContinue] = useState(false);
 
     const curtainRef = useRef(null);
     const boyRef = useRef(null);
     const girlRef = useRef(null);
-    const lineRefs = useRef([]);
+    const messageRef = useRef(null);
 
+    // Cinematic entrance
     useEffect(() => {
         const tl = gsap.timeline({ delay: 0.3 });
 
@@ -181,34 +180,42 @@ export default function Screen3({ onNext }) {
         return () => tl.kill();
     }, []);
 
+    // Sequential message with fade in/out at same position
     useEffect(() => {
         let index = 0;
-        const interval = setInterval(() => {
-            if (index < romanticLines.length) {
-                setLines(prev => [...prev, romanticLines[index]]);
 
-                setTimeout(() => {
-                    if (lineRefs.current[index]) {
-                        gsap.to(lineRefs.current[index], {
-                            opacity: 1,
-                            y: 0,
-                            duration: 1.8,
-                            ease: "power3.out"
-                        });
-                    }
-                }, 120);
+        const showNextLine = () => {
+            if (index < romanticLines.length) {
+                // Fade out current line
+                if (messageRef.current) {
+                    gsap.to(messageRef.current, {
+                        opacity: 0,
+                        duration: 0.8,
+                        onComplete: () => {
+                            setCurrentLine(romanticLines[index]);
+                            // Fade in new line
+                            gsap.to(messageRef.current, {
+                                opacity: 1,
+                                duration: 1.6,
+                                ease: "power2.out"
+                            });
+                        }
+                    });
+                } else {
+                    setCurrentLine(romanticLines[index]);
+                }
 
                 index++;
+                setTimeout(showNextLine, 3200);
             } else {
-                clearInterval(interval);
                 setTimeout(() => {
                     setShowContinue(true);
                     gsap.to(curtainRef.current.parentNode, { filter: 'brightness(0.72)', duration: 4 });
-                }, 1100);
+                }, 1400);
             }
-        }, 3000);
+        };
 
-        return () => clearInterval(interval);
+        setTimeout(showNextLine, 800);
     }, []);
 
     return (
@@ -238,21 +245,25 @@ export default function Screen3({ onNext }) {
                 <div style={styles.sideTable}>💑</div>
             </div>
 
-            {/* Elegant Message at Top */}
+            {/* Single Message Position at Top */}
             <div style={styles.letterContainer}>
-                <h2 style={{ marginBottom: '2.8rem', fontSize: '2.9rem', color: '#c23b6f', fontStyle: 'italic' }}>
+                <h2 style={{ marginBottom: '2.5rem', fontSize: '3rem', color: '#c23b6f', fontStyle: 'italic' }}>
                     My Dearest...
                 </h2>
 
-                {lines.map((line, i) => (
-                    <p
-                        key={i}
-                        ref={el => lineRefs.current[i] = el}
-                        style={styles.messageLine}
-                    >
-                        {line}
-                    </p>
-                ))}
+                <p
+                    ref={messageRef}
+                    style={{
+                        fontSize: '1.85rem',
+                        lineHeight: 2.1,
+                        fontStyle: 'italic',
+                        color: '#5c2d5c',
+                        textShadow: '0 3px 12px rgba(0,0,0,0.1)',
+                        minHeight: '120px',
+                    }}
+                >
+                    {currentLine}
+                </p>
             </div>
 
             {showContinue && (
