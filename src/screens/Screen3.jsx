@@ -122,12 +122,12 @@ const styles = {
 
     letterContainer: {
         position: 'absolute',
-        top: '14%',
+        top: '8%',
         left: '50%',
         transform: 'translateX(-50%)',
         width: '86%',
         maxWidth: '820px',
-        zIndex: 30,
+        zIndex: 40,
         textAlign: 'center',
         padding: '1.5rem',
     },
@@ -138,7 +138,7 @@ const styles = {
         marginBottom: '1.8rem',
         fontStyle: 'italic',
         color: '#5c2d5c',
-        opacity: 0,
+        opacity: 1,
         transform: 'translateY(30px)',
         letterSpacing: '0.6px',
     },
