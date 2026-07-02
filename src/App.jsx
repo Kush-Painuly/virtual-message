@@ -4,9 +4,10 @@ import Screen2 from './screens/Screen2.jsx'
 import Screen3 from './screens/Screen3.jsx'
 import Screen4 from './screens/Screen4.jsx'
 import Screen5 from './screens/Screen5.jsx'
+import Screen6 from './screens/Screen6.jsx'
 
 // As new screens are built, add them here and pass `onNext` to each screen
-const SCREENS = [Screen1, Screen2, Screen3, Screen4, Screen5]
+const SCREENS = [Screen1, Screen2, Screen3, Screen4, Screen5, Screen6]
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState(0)
