@@ -4,6 +4,17 @@ import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, s
 import { db } from '../firebase';
 import FallingLeaves from '../components/FallingLeaves';
 
+const romanticLines = [
+    "Hey my love...",
+    "From the moment I first saw you, my heart knew you were the one.",
+    "Your smile lights up my darkest days.",
+    "Every moment with you feels like a beautiful dream.",
+    "I love the way you are — kind, beautiful, and so genuine.",
+    "I want to create hundreds of happy memories with you.",
+    "Will you go on a date with me?",
+    "I can't wait to hold your hand and make this real... 💕"
+];
+
 const styles = {
     root: {
         position: 'relative',
@@ -149,49 +160,18 @@ const styles = {
     },
 };
 
+
 export default function Screen3({ onNext }) {
-    const [messages, setMessages] = useState([]);
-    const [input, setInput] = useState('');
-    const [isBoyTurn, setIsBoyTurn] = useState(true);
+    const [lines, setLines] = useState([]);
+    const [showContinue, setShowContinue] = useState(false);
     const [scene, setScene] = useState('day');
 
     const curtainRef = useRef(null);
     const boyRef = useRef(null);
     const girlRef = useRef(null);
-    const inputRef = useRef(null);
+    const lineRefs = useRef([]);
 
-    // Real-time messages
-    useEffect(() => {
-        const q = query(collection(db, "romanticChat"), orderBy("timestamp"));
-        const unsubscribe = onSnapshot(q, (snap) => {
-            setMessages(snap.docs.map(d => ({ ...d.data() })));
-        });
-        return unsubscribe;
-    }, []);
-
-    // Real-time shared turn
-    useEffect(() => {
-        const turnRef = doc(db, "gameState", "currentTurn");
-
-        const initTurn = async () => {
-            const turnSnap = await getDoc(turnRef);
-            if (!turnSnap.exists()) {
-                await setDoc(turnRef, { isBoyTurn: true });
-            }
-        };
-
-        initTurn();
-
-        const unsubscribe = onSnapshot(turnRef, (docSnap) => {
-            if (docSnap.exists()) {
-                setIsBoyTurn(docSnap.data().isBoyTurn);
-            }
-        });
-
-        return unsubscribe;
-    }, []);
-
-    // Cinematic animation
+    // Cinematic entrance
     useEffect(() => {
         const tl = gsap.timeline({ delay: 0.3 });
 
@@ -202,34 +182,41 @@ export default function Screen3({ onNext }) {
             .to(girlRef.current, { y: 0, duration: 1.5, ease: "power2.in" })
             .to(boyRef.current, { y: 25, duration: 1.4, ease: "power2.in" }, "-=1.1");
 
-        tl.to(inputRef.current, { opacity: 1, y: 0, duration: 1.7, ease: "back.out(1.6)" }, "-=0.9");
-
         return () => tl.kill();
     }, []);
 
-    // Night mode
+    // Line by line message
     useEffect(() => {
-        if (messages.length >= 5) {
-            setScene('night');
-            gsap.to(curtainRef.current.parentNode, { filter: 'brightness(0.72)', duration: 4.5 });
-        }
-    }, [messages.length]);
+        let index = 0;
+        const interval = setInterval(() => {
+            if (index < romanticLines.length) {
+                setLines(prev => [...prev, romanticLines[index]]);
 
-    const sendMessage = async () => {
-        if (!input.trim()) return;
+                setTimeout(() => {
+                    if (lineRefs.current[index]) {
+                        gsap.to(lineRefs.current[index], {
+                            opacity: 1,
+                            y: 0,
+                            duration: 1.4,
+                            ease: "power2.out"
+                        });
+                    }
+                }, 150);
 
-        await addDoc(collection(db, "romanticChat"), {
-            text: input.trim(),
-            sender: isBoyTurn ? "boy" : "girl",
-            timestamp: serverTimestamp(),
-        });
+                index++;
+            } else {
+                clearInterval(interval);
+                setTimeout(() => {
+                    setShowContinue(true);
+                    setScene('night');
+                    gsap.to(curtainRef.current.parentNode, { filter: 'brightness(0.72)', duration: 4 });
+                }, 1200);
+            }
+        }, 2600); // Change speed here
 
-        // Switch turn
-        const turnRef = doc(db, "gameState", "currentTurn");
-        await setDoc(turnRef, { isBoyTurn: !isBoyTurn });
+        return () => clearInterval(interval);
+    }, []);
 
-        setInput('');
-    };
     return (
         <div style={styles.root}>
             <div style={styles.cafeBg} />
@@ -237,6 +224,7 @@ export default function Screen3({ onNext }) {
 
             <div ref={curtainRef} style={styles.curtain} />
 
+            {/* Cafe Scene */}
             <div style={styles.tablesContainer}>
                 <div style={styles.sideTable}>👫</div>
                 <div style={styles.sideTable}>💑</div>
@@ -257,70 +245,30 @@ export default function Screen3({ onNext }) {
                 <div style={styles.sideTable}>💑</div>
             </div>
 
-            {/* Messages */}
-            {messages.slice(-5).map((msg, i) => (
-                <div
-                    key={i}
-                    style={msg.sender === 'boy' ? styles.messageBoy : styles.messageGirl}
-                >
-                    <strong>{msg.sender === 'boy' ? '❤️ You' : '💕 Her'}</strong><br />
-                    {msg.text}
-                </div>
-            ))}
+            {/* Romantic Message Box */}
+            <div style={styles.letterBox}>
+                <h2 style={{ marginBottom: '2rem', fontSize: '2.6rem', color: '#c23b6f' }}>
+                    My Dearest...
+                </h2>
 
-            {/* Input */}
-            <div ref={inputRef} style={{ ...styles.inputContainer, opacity: 0 }}>
-                <div style={{ display: 'flex', gap: '12px', flexDirection: 'column', sm: { flexDirection: 'row' } }}>
-                    <input
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                        placeholder={isBoyTurn ? "Tell her how special she is..." : "Waiting for her sweet reply..."}
-                        disabled={!isBoyTurn}
-                        style={{
-                            flex: 1,
-                            padding: '20px 28px',
-                            fontSize: '1.2rem',
-                            borderRadius: '9999px',
-                            border: 'none',
-                            background: isBoyTurn ? 'rgba(255,255,255,0.96)' : 'rgba(240,240,240,0.8)',
-                            boxShadow: '0 15px 45px rgba(194,59,111,0.2)',
-                            cursor: isBoyTurn ? 'text' : 'not-allowed',
-                        }}
-                    />
-                    <button
-                        onClick={sendMessage}
-                        disabled={!isBoyTurn}
-                        style={{
-                            padding: '20px 48px',
-                            background: isBoyTurn ? 'linear-gradient(45deg, #ff4d94, #c22b6f)' : '#ccc',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '9999px',
-                            fontSize: '1.2rem',
-                            cursor: isBoyTurn ? 'pointer' : 'not-allowed',
-                            boxShadow: isBoyTurn ? '0 15px 45px rgba(255,77,148,0.4)' : 'none',
-                            whiteSpace: 'nowrap',
-                        }}
+                {lines.map((line, i) => (
+                    <p
+                        key={i}
+                        ref={el => lineRefs.current[i] = el}
+                        style={styles.messageLine}
                     >
-                        Send 💌
-                    </button>
-                </div>
+                        {line}
+                    </p>
+                ))}
             </div>
 
-            {scene === 'night' && (
-                <div onClick={onNext} style={{
-                    position: 'absolute',
-                    bottom: '6%',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    fontSize: '1.5rem',
-                    color: '#5c2d5c',
-                    cursor: 'pointer',
-                    zIndex: 50,
-                }}>
-                    The night feels so romantic... Tap to continue ✨
+            {/* Continue */}
+            {showContinue && (
+                <div
+                    style={styles.continueHint}
+                    onClick={onNext}
+                >
+                    Tap to continue ✨
                 </div>
             )}
 
