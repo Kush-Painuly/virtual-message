@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
-import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, setDoc } from 'firebase/firestore';
-import { db } from '../firebase';
 import FallingLeaves from '../components/FallingLeaves';
 
 const romanticLines = [
@@ -127,23 +125,22 @@ const styles = {
         top: '18%',
         left: '50%',
         transform: 'translateX(-50%)',
-        width: '92%',
+        width: '88%',
         maxWidth: '720px',
-        background: 'rgba(255,255,255,0.94)',
-        padding: '2.5rem 3rem',
+        background: 'rgba(255,255,255,0.95)',
+        padding: '3rem 3.5rem',
         borderRadius: '28px',
         boxShadow: '0 25px 70px rgba(194,59,111,0.25)',
         zIndex: 30,
         textAlign: 'center',
-        minHeight: '260px',
     },
 
     messageLine: {
-        fontSize: '1.48rem',
-        lineHeight: 1.75,
-        marginBottom: '1.1rem',
+        fontSize: '1.55rem',
+        lineHeight: 1.85,
+        marginBottom: '1.4rem',
         opacity: 0,
-        transform: 'translateY(25px)',
+        transform: 'translateY(30px)',
         color: '#5c2d5c',
     },
 
@@ -152,14 +149,16 @@ const styles = {
         bottom: '8%',
         left: '50%',
         transform: 'translateX(-50%)',
-        fontSize: '1.5rem',
+        fontSize: '1.55rem',
         color: '#c23b6f',
         cursor: 'pointer',
         zIndex: 50,
-        opacity: 0,
+        padding: '12px 32px',
+        borderRadius: '50px',
+        background: 'rgba(255,255,255,0.9)',
+        boxShadow: '0 10px 30px rgba(194,59,111,0.3)',
     },
 };
-
 
 export default function Screen3({ onNext }) {
     const [lines, setLines] = useState([]);
@@ -171,7 +170,7 @@ export default function Screen3({ onNext }) {
     const girlRef = useRef(null);
     const lineRefs = useRef([]);
 
-    // Cinematic entrance
+    // Cinematic opening
     useEffect(() => {
         const tl = gsap.timeline({ delay: 0.3 });
 
@@ -197,11 +196,11 @@ export default function Screen3({ onNext }) {
                         gsap.to(lineRefs.current[index], {
                             opacity: 1,
                             y: 0,
-                            duration: 1.4,
-                            ease: "power2.out"
+                            duration: 1.6,
+                            ease: "power3.out"
                         });
                     }
-                }, 150);
+                }, 100);
 
                 index++;
             } else {
@@ -209,10 +208,13 @@ export default function Screen3({ onNext }) {
                 setTimeout(() => {
                     setShowContinue(true);
                     setScene('night');
-                    gsap.to(curtainRef.current.parentNode, { filter: 'brightness(0.72)', duration: 4 });
-                }, 1200);
+                    gsap.to(curtainRef.current.parentNode, {
+                        filter: 'brightness(0.72) saturate(0.95)',
+                        duration: 4
+                    });
+                }, 900);
             }
-        }, 2600); // Change speed here
+        }, 2800);
 
         return () => clearInterval(interval);
     }, []);
@@ -224,7 +226,6 @@ export default function Screen3({ onNext }) {
 
             <div ref={curtainRef} style={styles.curtain} />
 
-            {/* Cafe Scene */}
             <div style={styles.tablesContainer}>
                 <div style={styles.sideTable}>👫</div>
                 <div style={styles.sideTable}>💑</div>
@@ -245,9 +246,9 @@ export default function Screen3({ onNext }) {
                 <div style={styles.sideTable}>💑</div>
             </div>
 
-            {/* Romantic Message Box */}
+            {/* Message Box */}
             <div style={styles.letterBox}>
-                <h2 style={{ marginBottom: '2rem', fontSize: '2.6rem', color: '#c23b6f' }}>
+                <h2 style={{ marginBottom: '2.2rem', fontSize: '2.8rem', color: '#c23b6f' }}>
                     My Dearest...
                 </h2>
 
@@ -262,7 +263,7 @@ export default function Screen3({ onNext }) {
                 ))}
             </div>
 
-            {/* Continue */}
+            {/* Continue Button */}
             {showContinue && (
                 <div
                     style={styles.continueHint}
