@@ -111,15 +111,6 @@ const styles = {
         zIndex: 12,
     },
 
-    chef: {
-        position: 'absolute',
-        top: '85px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        fontSize: '3.8rem',
-        zIndex: 18,
-    },
-
     // Message at the VERY TOP
     letterContainer: {
         position: 'absolute',
@@ -134,8 +125,8 @@ const styles = {
     },
 
     messageLine: {
-        fontSize: '2.1rem',
-        lineHeight: 2.2,
+        fontSize: '24px',
+        lineHeight: 140%,
         marginBottom: '2rem',
         fontStyle: 'italic',
         color: '#5c2d5c',
@@ -223,8 +214,6 @@ export default function Screen3({ onNext }) {
                 <div style={styles.sideTable}>💑</div>
 
                 <div style={styles.mainTableContainer}>
-                    <div style={styles.chef}>👨‍🍳</div>
-
                     <div ref={boyRef} style={{ ...styles.boy, opacity: 0 }} />
                     <div ref={girlRef} style={{ ...styles.girl, opacity: 0 }} />
 
