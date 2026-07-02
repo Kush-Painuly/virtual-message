@@ -126,7 +126,7 @@ const styles = {
 
     messageLine: {
         fontSize: '24px',
-        lineHeight: 140%,
+        lineHeight: '140%',
         marginBottom: '2rem',
         fontStyle: 'italic',
         color: '#5c2d5c',
