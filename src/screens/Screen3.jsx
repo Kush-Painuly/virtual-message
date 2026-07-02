@@ -36,7 +36,7 @@ const styles = {
     softOverlay: {
         position: 'absolute',
         inset: 0,
-        background: 'linear-gradient(to bottom, rgba(255,240,248,0.5), rgba(255,240,248,0.85))',
+        background: 'linear-gradient(to bottom, rgba(255,240,248,0.45), rgba(255,240,248,0.88))',
         zIndex: 2,
     },
 
@@ -122,25 +122,25 @@ const styles = {
 
     letterContainer: {
         position: 'absolute',
-        top: '12%',
+        top: '14%',
         left: '50%',
         transform: 'translateX(-50%)',
         width: '86%',
         maxWidth: '820px',
         zIndex: 30,
         textAlign: 'center',
-        padding: '2rem 1rem',
+        padding: '1.5rem',
     },
 
     messageLine: {
-        fontSize: '1.65rem',
-        lineHeight: 1.9,
-        marginBottom: '1.6rem',
+        fontSize: '1.72rem',
+        lineHeight: 1.95,
+        marginBottom: '1.8rem',
         fontStyle: 'italic',
         color: '#5c2d5c',
         opacity: 0,
-        transform: 'translateY(20px)',
-        letterSpacing: '0.4px',
+        transform: 'translateY(30px)',
+        letterSpacing: '0.6px',
     },
 
     continueHint: {
@@ -148,14 +148,14 @@ const styles = {
         bottom: '8%',
         left: '50%',
         transform: 'translateX(-50%)',
-        fontSize: '1.55rem',
+        fontSize: '1.6rem',
         color: '#c23b6f',
         cursor: 'pointer',
         zIndex: 50,
-        padding: '14px 40px',
+        padding: '16px 48px',
         borderRadius: '50px',
-        background: 'rgba(255,255,255,0.9)',
-        boxShadow: '0 12px 35px rgba(194,59,111,0.25)',
+        background: 'rgba(255,255,255,0.92)',
+        boxShadow: '0 15px 40px rgba(194,59,111,0.3)',
     },
 };
 
@@ -168,7 +168,6 @@ export default function Screen3({ onNext }) {
     const girlRef = useRef(null);
     const lineRefs = useRef([]);
 
-    // Cinematic entrance
     useEffect(() => {
         const tl = gsap.timeline({ delay: 0.3 });
 
@@ -182,38 +181,32 @@ export default function Screen3({ onNext }) {
         return () => tl.kill();
     }, []);
 
-    // Typewriter effect line by line
     useEffect(() => {
         let index = 0;
-
         const interval = setInterval(() => {
             if (index < romanticLines.length) {
                 setLines(prev => [...prev, romanticLines[index]]);
 
                 setTimeout(() => {
-                    const el = lineRefs.current[index];
-                    if (el) {
-                        gsap.to(el, {
+                    if (lineRefs.current[index]) {
+                        gsap.to(lineRefs.current[index], {
                             opacity: 1,
                             y: 0,
                             duration: 1.8,
                             ease: "power3.out"
                         });
                     }
-                }, 80);
+                }, 120);
 
                 index++;
             } else {
                 clearInterval(interval);
                 setTimeout(() => {
                     setShowContinue(true);
-                    gsap.to(curtainRef.current.parentNode, {
-                        filter: 'brightness(0.72)',
-                        duration: 4
-                    });
-                }, 1200);
+                    gsap.to(curtainRef.current.parentNode, { filter: 'brightness(0.72)', duration: 4 });
+                }, 1100);
             }
-        }, 3200); // Adjust speed here (ms per line)
+        }, 3000);
 
         return () => clearInterval(interval);
     }, []);
@@ -225,7 +218,6 @@ export default function Screen3({ onNext }) {
 
             <div ref={curtainRef} style={styles.curtain} />
 
-            {/* Cafe Scene */}
             <div style={styles.tablesContainer}>
                 <div style={styles.sideTable}>👫</div>
                 <div style={styles.sideTable}>💑</div>
@@ -246,9 +238,9 @@ export default function Screen3({ onNext }) {
                 <div style={styles.sideTable}>💑</div>
             </div>
 
-            {/* Elegant Letter at Top */}
+            {/* Elegant Message at Top */}
             <div style={styles.letterContainer}>
-                <h2 style={{ marginBottom: '2.5rem', fontSize: '2.8rem', color: '#c23b6f', fontStyle: 'italic' }}>
+                <h2 style={{ marginBottom: '2.8rem', fontSize: '2.9rem', color: '#c23b6f', fontStyle: 'italic' }}>
                     My Dearest...
                 </h2>
 
@@ -263,7 +255,6 @@ export default function Screen3({ onNext }) {
                 ))}
             </div>
 
-            {/* Continue */}
             {showContinue && (
                 <div
                     style={styles.continueHint}
